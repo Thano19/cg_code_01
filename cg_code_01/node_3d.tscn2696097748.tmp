@@ -1,0 +1,92 @@
+[gd_scene load_steps=15 format=3 uid="uid://086ffde2eh5c"]
+
+[ext_resource type="Texture2D" uid="uid://ydfp4xe3tbck" path="res://MeterGrid.png" id="1_a202f"]
+[ext_resource type="Script" uid="uid://dkh3v1flx5lm7" path="res://camera_rig.gd" id="2_noarx"]
+[ext_resource type="PackedScene" uid="uid://bm5u03fuivd4s" path="res://Asset1CG.glb" id="3_a0tk4"]
+[ext_resource type="PackedScene" uid="uid://baifu031a6o41" path="res://Asset3CG.glb" id="4_r3fl7"]
+[ext_resource type="PackedScene" uid="uid://catiigguyakea" path="res://Asset2CG.glb" id="5_jka67"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a202f"]
+sky_horizon_color = Color(0.629715, 0.689122, 0.660181, 1)
+ground_bottom_color = Color(0.0588235, 0.227451, 0.0156863, 1)
+ground_horizon_color = Color(0.629715, 0.689122, 0.660181, 1)
+
+[sub_resource type="Sky" id="Sky_noarx"]
+sky_material = SubResource("ProceduralSkyMaterial_a202f")
+
+[sub_resource type="Environment" id="Environment_a0tk4"]
+background_mode = 2
+sky = SubResource("Sky_noarx")
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_noarx"]
+albedo_color = Color(0.601223, 0.601223, 0.601223, 1)
+albedo_texture = ExtResource("1_a202f")
+
+[sub_resource type="BoxMesh" id="BoxMesh_a0tk4"]
+material = SubResource("StandardMaterial3D_noarx")
+size = Vector3(5, 0.05, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jka67"]
+size = Vector3(5, 0.05, 5)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jka67"]
+bounce = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_jka67"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_i5arm"]
+radius = 0.1
+
+[node name="Main" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.00819969)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_a0tk4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.865018, -0.45662, 0.207948, -0.0417616, 0.478537, 0.877074, -0.5, 0.75, -0.433013, 0, 1.15462, 0)
+shadow_enabled = true
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(0.699488, 0, 0.714643, 0, 1, 0, -0.714643, 0, 0.699488, 0, 0, 0)
+script = ExtResource("2_noarx")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig"]
+transform = Transform3D(-0.998105, 0.0547808, 0.0280282, 0.0613126, 0.924017, 0.377403, -0.00522411, 0.378406, -0.925625, -0.0592102, 0.542624, -1.03275)
+visible = false
+
+[node name="Asset1CG" parent="." instance=ExtResource("3_a0tk4")]
+transform = Transform3D(-0.0244479, 0, 0.159099, 0, 0.160966, 0, -0.159099, 0, -0.0244479, -0.507338, 0.296869, 0.487794)
+
+[node name="Asset2CG" parent="." instance=ExtResource("5_jka67")]
+transform = Transform3D(-0.999976, 0, 0.00692889, 0, 1, 0, -0.00692889, 0, -0.999976, -0.98862, 0.32022, 0.585184)
+
+[node name="Asset3CG" parent="." instance=ExtResource("4_r3fl7")]
+transform = Transform3D(0.106351, 0, 0, 0, 0.106351, 0, 0, 0, 0.106351, -1.61203, 0.173786, 0.578254)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(0.106351, 0, 0, 0, 0.106351, 0, 0, 0, 0.106351, 0, 0, 0)
+
+[node name="Playground" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("BoxMesh_a0tk4")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_jka67")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.161699, 0.102774, 0)
+physics_material_override = SubResource("PhysicsMaterial_jka67")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+mesh = SubResource("SphereMesh_jka67")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("SphereShape3D_i5arm")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(0.868718, 0.495307, 0, -0.495307, 0.868718, 0, 0, 0, 1, -0.132778, -0.0158303, 0.0300459)
+size = Vector3(0.346875, 0.0182617, 0.1)
